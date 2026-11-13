@@ -1,4 +1,5 @@
-# Low-power Ubuntu home server
+Home Server
+Simple and Low power
 
 A recovery-oriented reference architecture for a small Ubuntu Server 24.04
 homelab: containerized services on an NVMe system disk, two SATA SSDs in
