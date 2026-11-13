@@ -1,0 +1,8 @@
+# Sanitized aggregation of optional service manifests.
+# Review each included file and its upstream upgrade notes before enabling it.
+include:
+  - pihole/compose.yml
+  - jellyfin/compose.yml
+  - immich/compose.yml
+  - beszel/compose.yml
+  - pinchflat/compose.yml

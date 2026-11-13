@@ -1,0 +1,43 @@
+services:
+  beszel:
+    image: henrygd/beszel:<PINNED_VERSION>
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${BESZEL_PORT:-8080}:8090"
+    volumes:
+      - ${APP_ROOT}/beszel/data:/beszel_data
+      - ${APP_ROOT}/beszel/socket:/beszel_socket
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8090"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  beszel-agent:
+    image: henrygd/beszel-agent:<PINNED_VERSION>
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ${APP_ROOT}/beszel/agent:/var/lib/beszel-agent
+      - ${APP_ROOT}/beszel/socket:/beszel_socket
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      LISTEN: /beszel_socket/beszel.sock
+      HUB_URL: http://127.0.0.1:${BESZEL_PORT:-8080}
+      TOKEN: ${BESZEL_AGENT_TOKEN:?Set this outside Git}
+      KEY: ${BESZEL_AGENT_KEY:?Set this outside Git}
+    # Grant only the device and capabilities required by the monitoring design.
+    # Replace these illustrative paths after inspecting the host.
+    devices:
+      - ${DATA_DEVICE_1:?Set explicitly}:/dev/data-disk-1
+      - ${DATA_DEVICE_2:?Set explicitly}:/dev/data-disk-2
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
+    healthcheck:
+      test: ["CMD", "test", "-S", "/beszel_socket/beszel.sock"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s

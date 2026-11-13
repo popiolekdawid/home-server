@@ -1,0 +1,62 @@
+name: immich
+
+services:
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:?Set a tested version}
+    ports:
+      - "127.0.0.1:${IMMICH_PORT:-2283}:2283"
+    volumes:
+      - immich-data:/data
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_ROOT}/photos:/mnt/photos:ro
+    env_file:
+      - ${IMMICH_ENV_FILE:-.env}
+    depends_on:
+      - redis
+      - database
+    restart: unless-stopped
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:?Set a tested version}
+    volumes:
+      - model-cache:/cache
+    env_file:
+      - ${IMMICH_ENV_FILE:-.env}
+    restart: unless-stopped
+
+  redis:
+    image: docker.io/valkey/valkey:<PINNED_VERSION>
+    restart: unless-stopped
+
+  database:
+    image: ghcr.io/immich-app/postgres:<PINNED_VERSION>
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set outside Git}
+      POSTGRES_USER: ${DB_USERNAME:?Set outside Git}
+      POSTGRES_DB: ${DB_DATABASE_NAME:?Set outside Git}
+      POSTGRES_INITDB_ARGS: --data-checksums
+      DB_STORAGE_TYPE: SSD
+    volumes:
+      - immich-db:/var/lib/postgresql/data
+    shm_size: 128mb
+    restart: unless-stopped
+
+volumes:
+  immich-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${APP_ROOT}/immich/data
+  immich-db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${APP_ROOT}/immich/pgdata
+  model-cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${APP_ROOT}/immich/model-cache

@@ -1,0 +1,10 @@
+services:
+  pinchflat:
+    image: ghcr.io/kieraneglin/pinchflat:<PINNED_VERSION>
+    environment:
+      TZ: "${TZ:-UTC}"
+    ports:
+      - "127.0.0.1:${PINCHFLAT_PORT:-8945}:8945"
+    volumes:
+      - ${APP_ROOT}/pinchflat/config:/config
+      - ${DATA_ROOT}/downloads:/downloads

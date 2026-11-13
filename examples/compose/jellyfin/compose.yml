@@ -1,0 +1,18 @@
+services:
+  jellyfin:
+    image: ${JELLYFIN_IMAGE:?Set a tested image}
+    environment:
+      PUID: "${PUID:-1000}"
+      PGID: "${PGID:-1000}"
+      TZ: "${TZ:-UTC}"
+    volumes:
+      - ${APP_ROOT}/jellyfin/config:/config
+      - ${APP_ROOT}/jellyfin/cache:/cache
+      - ${APP_ROOT}/jellyfin/data:/data
+      - ${APP_ROOT}/jellyfin/transcode:/transcode
+      - ${DATA_ROOT}/media/movies:/movies:ro
+      - ${DATA_ROOT}/media/shows:/shows:ro
+      - ${DATA_ROOT}/media/videos:/videos:ro
+    ports:
+      - "127.0.0.1:${JELLYFIN_PORT:-8096}:8096"
+    restart: unless-stopped

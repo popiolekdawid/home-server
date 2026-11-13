@@ -1,0 +1,31 @@
+# Secrets and mutable configuration
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+secrets/
+
+# Databases, dumps, backup output, and runtime state
+*.db
+*.sqlite
+*.sqlite3
+*.sql
+*.dump
+*.log
+backups/
+runtime/
+*.tar
+*.tar.gz
+*.zip
+
+# Local/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~

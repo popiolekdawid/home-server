@@ -1,0 +1,16 @@
+services:
+  filebrowser:
+    image: filebrowser/filebrowser:<PINNED_VERSION>
+    environment:
+      PUID: "${PUID:-1000}"
+      PGID: "${PGID:-1000}"
+    ports:
+      - "127.0.0.1:${FILEBROWSER_PORT:-8080}:80"
+    volumes:
+      - ${APP_ROOT}/filebrowser/config:/config
+      - filebrowser-db:/database
+      - ${DATA_ROOT}:/srv:ro
+    restart: unless-stopped
+
+volumes:
+  filebrowser-db:

@@ -1,0 +1,20 @@
+services:
+  pihole:
+    image: pihole/pihole:<PINNED_VERSION>
+    ports:
+      - "${LAN_ADDRESS:?Set a private LAN address}:53:53/tcp"
+      - "${LAN_ADDRESS:?Set a private LAN address}:53:53/udp"
+      - "${LAN_ADDRESS:?Set a private LAN address}:${PIHOLE_HTTP_PORT:-8080}:80/tcp"
+    dns:
+      - 1.1.1.1
+      - 9.9.9.9
+    environment:
+      TZ: "${TZ:-UTC}"
+      FTLCONF_webserver_api_password: ${PIHOLE_PASSWORD:?Set outside Git}
+      FTLCONF_dns_listeningMode: "LOCAL"
+    volumes:
+      - ${APP_ROOT}/pihole:/etc/pihole
+      - ${APP_ROOT}/dnsmasq.d:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
