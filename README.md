@@ -1,4 +1,4 @@
-Home Server
+# Home Server
 Simple and Low power
 
 A recovery-oriented reference architecture for a small Ubuntu Server 24.04
